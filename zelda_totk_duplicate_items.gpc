@@ -1,0 +1,141 @@
+// GPC Online Library
+
+/*
+* The Legend of Zelda: Tears of the Kingdom
+* Item Duplication Glitch
+* Game Version 1.1.1
+*
+* SETUP:
+* - ensure you have at least two bows in your inventory
+* - go to a location that is flat
+* - equip a shield and a melee weapon
+* - go to the bow menu in your inventory
+* - select the second-to-last bow, then exit the inventory
+* - take your bow out and fuse the material you want to duplicate
+* - press the SWITCH_CAPTURE key to start the loop (Touchpad on DualShock4)
+*/
+
+// prevent taking a screen capture every time you start/stop the loop
+unmap SWITCH_CAPTURE;
+ 
+int runLoop, currentButton, currentValue;
+
+init {
+    vm_tctrl(-5);
+}
+ 
+main {
+    if (event_press(SWITCH_CAPTURE)) {
+        runLoop = !runLoop;
+        if (!runLoop && combo_running(DuplicateItem)) {
+            combo_stop(DuplicateItem);
+        }
+    }
+ 
+    if (runLoop && !combo_running(DuplicateItem)) {
+        combo_run(DuplicateItem);
+    }
+}
+ 
+ combo DuplicateItem {
+    // open bow menu
+    setButton(SWITCH_PLUS);
+    call(PressButton);
+    
+    // drop first bow
+    setButton(SWITCH_A);
+    call(PressButton);
+    
+    setButton(SWITCH_LY);
+    call(PressButton);
+    
+    setButton(SWITCH_A);
+    call(PressButton);
+    
+    // equip 2nd bow
+    setButton(SWITCH_LX);
+    call(PressButton);
+    
+    setButton(SWITCH_A);
+    call(PressButton);
+    call(PressButton);
+    
+    // close and reopen menu
+    setButton(SWITCH_PLUS);
+    call(PressButtonQuickly);
+    call(PressButtonQuickly);
+    wait(50);
+        
+    // move to selected bow and drop
+    setButtonNegative(SWITCH_LX);
+    call(PressButton);
+
+    setButton(SWITCH_A);
+    call(PressButton);
+    
+    setButton(SWITCH_LY);
+    call(PressButton);
+    
+    setButton(SWITCH_A);
+    call(PressButton);
+    
+    // close menu
+    setButton(SWITCH_PLUS);
+    call(PressButton);
+    
+    //turn around and pick up bows
+    setButton(SWITCH_LY);
+    call(PressButton);
+    
+    setButton(SWITCH_A);
+    call(PressButton);
+    call(PressButton);
+    wait(30);
+    
+    // turn to face the original direction
+    setButtonNegative(SWITCH_LY);
+    call(PressButton);
+    
+    // reset cursor in bow menu
+    setButton(SWITCH_PLUS);
+    call(PressButton);
+    
+    setButtonNegative(SWITCH_LX);
+    call(PressButton);
+    
+    setButton(SWITCH_PLUS);
+    call(PressButton);
+    
+    // take bow out and fuse item to duplicate
+    setButton(SWITCH_ZR);
+    call(PressButton);
+    
+    setButton(SWITCH_UP);
+    call(PressButton);
+    
+    wait(800);
+ }
+ 
+ combo PressButton {
+    set_val(currentButton, currentValue);
+    wait(80);
+    set_val(currentButton, 0);
+    wait(80);
+ }
+ 
+combo PressButtonQuickly {
+    set_val(currentButton, currentValue);
+    wait(70);
+    set_val(currentButton, 0);
+    wait(70);
+ }
+ 
+function setButton(button) {
+    currentValue = 100;
+    currentButton = button;
+ }
+ 
+function setButtonNegative(button) {
+    currentValue = -100;
+    currentButton = button;
+ }
